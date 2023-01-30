@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.*;
 
 @Service
 public class AppUserService {
@@ -42,6 +43,13 @@ public class AppUserService {
         }
 
         AppUser appUser = new AppUser();
+
+        Pattern pattern = Pattern.compile("^[\\w.@-]*$");
+        Matcher matcher = pattern.matcher(username);
+        boolean validUsername = matcher.find();
+        if(!validUsername) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
+        }
         appUser.setUsername(username);
         appUser.setPassword(password);
         repo.save(appUser);
